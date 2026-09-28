@@ -1,0 +1,59 @@
+/* 沿用棒球站的作法:系統字型堆疊,不載 Google Fonts —— 那是 render-blocking 的
+   第三方請求,而繁中系統字本來就好看。零字型下載、無第三方依賴。 */
+:root {
+  --green: #1c7a4f; --green-d: #14603d;
+  --bg: #f6f8f7; --card: #fff; --line: #e2e8e5;
+  --ink: #17211d; --ink-2: #435049; --ink-3: #78877f;
+  --radius: 12px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0e1613; --card: #16211d; --line: #24332c;
+          --ink: #eaf2ee; --ink-2: #b6c6bd; --ink-3: #7d8f85; --green: #4ade96; --green-d: #35b87a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); line-height: 1.7;
+  font-family: system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  font-size: 15px; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--card);
+  border-bottom: 1px solid var(--line); padding: 10px 0; }
+.topbar .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand { font-weight: 800; color: var(--green); text-decoration: none; font-size: 16px; }
+.nav { display: flex; gap: 14px; margin-left: auto; }
+.nav a { color: var(--ink-2); text-decoration: none; font-size: 14px; }
+.nav a:hover { color: var(--green); }
+.page { padding: 22px 16px 40px; }
+h1 { font-size: 26px; margin: 6px 0 4px; line-height: 1.35; }
+h2 { font-size: 17px; margin: 26px 0 8px; }
+.crumb { font-size: 12.5px; color: var(--ink-3); margin-bottom: 8px; }
+.crumb a { color: var(--ink-3); }
+.roman { margin: 0 0 6px; color: var(--ink-3); font-size: 14px; letter-spacing: .04em; }
+.meta, .rank { margin: 2px 0; color: var(--ink-2); font-size: 14px; }
+.rank b { font-size: 20px; color: var(--green); }
+.asof { color: var(--ink-3); font-size: 12px; margin-left: 4px; }
+.lead { color: var(--ink-2); margin: 4px 0 14px; }
+.empty { color: var(--ink-3); }
+/* 新聞列表:日期、標題、媒體三段式 */
+.nw { list-style: none; margin: 4px 0 6px; padding: 0; display: grid; gap: 6px; }
+.nw li { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 10px 12px; display: grid; gap: 2px; }
+.nw-d { font-size: 12px; color: var(--green); font-weight: 700; }
+.nw-t { font-size: 14.5px; line-height: 1.6; }
+.nw-s { font-size: 12px; color: var(--ink-3); }
+.nw-s a { color: var(--ink-3); }
+.nw-day { font-size: 15px; color: var(--ink-2); margin-top: 20px; }
+/* 選手卡 */
+.morep { display: grid; gap: 8px; grid-template-columns: 1fr; margin: 4px 0 6px; }
+@media (min-width: 560px) { .morep { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 820px) { .morep { grid-template-columns: repeat(3, 1fr); } }
+.morep a { display: flex; flex-direction: column; gap: 2px; text-decoration: none;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 11px 13px; color: var(--ink); font-weight: 700; }
+.morep a:hover { border-color: var(--green); }
+.morep a span { font-weight: 400; font-size: 12px; color: var(--ink-3); }
+.more { margin-top: 18px; }
+.more a, .nw-t a { color: var(--green); text-decoration: none; font-weight: 700; }
+.foot { border-top: 1px solid var(--line); margin-top: 32px; padding: 18px 0 28px;
+  color: var(--ink-3); font-size: 12px; }
+.foot p { margin: 4px 0; line-height: 1.8; }

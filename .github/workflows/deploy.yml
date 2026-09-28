@@ -1,0 +1,59 @@
+name: 每日更新並部署
+
+on:
+  schedule:
+    - cron: "30 22 * * *"      # 台灣時間每天 06:30
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 抓新聞。失敗不擋部署 —— fetch_news 自己會在抓不到時保留舊檔不覆寫,
+      # 站上寧可顯示昨天的消息,也不要被洗成空的。
+      - name: 抓取新聞
+        run: python3 scripts/fetch_news.py || true
+
+      - name: 提交資料變動
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/news.json
+          git diff --staged --quiet || git commit -m "data: update $(date -u +%Y-%m-%d)"
+          git push || true
+
+      - name: 建置
+        run: node scripts/build.mjs
+        env:
+          BASE_PATH: /
+          SITE_ORIGIN: https://badminton.clutchgtime.com
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

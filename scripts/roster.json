@@ -1,0 +1,22 @@
+{
+ "_說明": "人工維護的選手名單。羽球沒有 MLB Stats API 的對等物(BWF 官網 403、賽事系統需登入,實測過),所以核心資料人工維護、新聞自動抓。名單依現在的新聞聲量篩選,不是憑印象列;聲量掉到零的先移出 active,不要留著讓站上出現不會更新的空頁。rank 是 BWF 世界排名,手動更新,updated 記下抓的日期 —— 沒有 updated 的排名不要顯示,過期的數字比沒有數字更糟。",
+ "season": 2026,
+ "players": [
+  { "slug": "chou-tien-chen",  "name": "周天成", "name_en": "Chou Tien-chen",  "event": "男單", "active": true },
+  { "slug": "lee-chia-hao",    "name": "李佳豪", "name_en": "Lee Chia-hao",    "event": "男單", "active": true },
+  { "slug": "sung-shuo-yun",   "name": "宋碩芸", "name_en": "Sung Shuo-yun",   "event": "女單", "active": true },
+  { "slug": "wang-chi-lin",    "name": "王齊麟", "name_en": "Wang Chi-lin",    "event": "男雙", "active": true, "partner": "邱相榤" },
+  { "slug": "chiu-hsiang-chieh","name": "邱相榤", "name_en": "Chiu Hsiang-chieh","event": "男雙", "active": true, "partner": "王齊麟" },
+  { "slug": "lee-che-hui",     "name": "李哲輝", "name_en": "Lee Che-hui",     "event": "男雙", "active": true, "partner": "楊博軒" },
+  { "slug": "yang-po-hsuan",   "name": "楊博軒", "name_en": "Yang Po-hsuan",   "event": "男雙／混雙", "active": true, "partner": "李哲輝／胡綾芳" },
+  { "slug": "yang-po-han",     "name": "楊博涵", "name_en": "Yang Po-han",     "event": "男雙", "active": true, "partner": "盧敬堯" },
+  { "slug": "lu-ching-yao",    "name": "盧敬堯", "name_en": "Lu Ching-yao",    "event": "男雙", "active": true, "partner": "楊博涵" },
+  { "slug": "yeh-hung-wei",    "name": "葉宏蔚", "name_en": "Yeh Hung-wei",    "event": "混雙", "active": true, "partner": "詹又蓁" },
+  { "slug": "chan-yu-chen",    "name": "詹又蓁", "name_en": "Chan Yu-chen",    "event": "混雙", "active": true, "partner": "葉宏蔚" },
+  { "slug": "hu-ling-fang",    "name": "胡綾芳", "name_en": "Hu Ling-fang",    "event": "混雙", "active": true, "partner": "楊博軒" }
+ ],
+ "_待確認": [
+  "戴資穎:近期仍有新聞(「宿敵對決 怎又跟陳雨菲打」),但不確定是現役還是回顧報導,查證後再決定列不列入",
+  "李洋:新聞顯示已退役(王齊麟改配邱相榤、「扛起李洋角色」),之後做歷代選手頁時再收"
+ ]
+}

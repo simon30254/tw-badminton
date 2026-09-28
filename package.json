@@ -1,0 +1,11 @@
+{
+  "name": "tw-badminton",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "news": "python3 scripts/fetch_news.py",
+    "preview": "node --run build && python3 -m http.server 4180 --directory dist"
+  }
+}
