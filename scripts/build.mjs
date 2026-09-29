@@ -25,6 +25,7 @@ const read = (p, fb) => { try { return JSON.parse(readFileSync(resolve(ROOT, p),
 const roster = read("scripts/roster.json", { players: [] });
 const players = roster.players.filter((p) => p.active);
 const news = read("public/data/news.json", { items: [] }).items || [];
+const asiad = read("scripts/asiad.json", null);
 const newsOf = (slug) => news.filter((n) => (n.players || []).includes(slug));
 const ld = (o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`;
 const mdZh = (d) => `${Number(d.slice(5, 7))} 月 ${Number(d.slice(8, 10))} 日`;
@@ -46,7 +47,7 @@ ${head}</head>
 <body>
 <header class="topbar"><div class="wrap">
   <a class="brand" href="${BASE}">${NAME}</a>
-  <nav class="nav"><a href="${BASE}">選手</a><a href="${BASE}news/">最新消息</a></nav>
+  <nav class="nav"><a href="${BASE}">選手</a>${asiad && asiad.active ? `<a href="${BASE}asiad/">亞運戰績</a>` : ""}<a href="${BASE}news/">最新消息</a></nav>
 </div></header>
 <main class="wrap page">${body}</main>
 <footer class="foot"><div class="wrap">
@@ -121,6 +122,39 @@ write("news", page({
 }));
 urls.push(`${SITE}${BASE}news/`);
 
+// ---- 賽事頁 /asiad/ ----
+// 跟姊妹站(棒球)同一個作法:媒體給的是賽果,這站給的是「名單裡每個人打到哪裡」,
+// 而且把選手頁連起來。賽事結束把 active 設 false,頁面與所有連結一起消失。
+if (asiad && asiad.active) {
+  const bySlug = Object.fromEntries(players.map((p) => [p.slug, p]));
+  const cards = (asiad.players || []).filter((x) => bySlug[x.slug]).map((x) => {
+    const p = bySlug[x.slug];
+    return `<a class="ev-p" href="${BASE}player/${p.slug}/">` +
+      `<span class="ev-p-n">${esc(p.name)}<span class="ev-r">${esc(x.result)}</span></span>` +
+      `<span class="ev-p-m">${esc(p.event)}${p.partner ? `・搭檔 ${esc(p.partner)}` : ""}</span>` +
+      `<span class="ev-p-t">${esc(x.note)}</span></a>`;
+  }).join("");
+  write("asiad", page({
+    title: `${asiad.name}羽球中華隊戰績｜${asiad.headline}｜${NAME}`,
+    desc: asiad.lead.slice(0, 155),
+    canonical: `${SITE}${BASE}asiad/`,
+    head: ld({ "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: (asiad.faq || []).map((it) => ({ "@type": "Question", name: it.q,
+        acceptedAnswer: { "@type": "Answer", text: it.a } })) }),
+    body:
+      `<nav class="crumb"><a href="${BASE}">首頁</a> › <span>${esc(asiad.name)}羽球</span></nav>` +
+      `<h1>${esc(asiad.name)}羽球中華隊戰績</h1>` +
+      `<p class="lead">${esc(asiad.lead)}</p>` +
+      `<section class="box"><h2>賽事結果（${esc(mdZh(asiad.start))}–${esc(mdZh(asiad.end))}）</h2>` +
+      `<ul class="rs">${(asiad.results || []).map((t) => `<li>${esc(t)}</li>`).join("")}</ul></section>` +
+      `<h2>選手成績（${(asiad.players || []).length} 位）</h2><div class="ev-ps">${cards}</div>` +
+      `<section class="faq"><h2>常見問題</h2>` +
+      (asiad.faq || []).map((it) => `<h3 class="q">${esc(it.q)}</h3><p class="a">${esc(it.a)}</p>`).join("") +
+      `</section>`,
+  }));
+  urls.push(`${SITE}${BASE}asiad/`);
+}
+
 // ---- 首頁 ----
 const byEvent = new Map();
 for (const p of players) {
@@ -137,6 +171,9 @@ write(".", page({
              itemListElement: players.map((p, i) => ({ "@type": "ListItem", position: i + 1,
                name: p.name, url: `${SITE}${BASE}player/${p.slug}/` })) }),
   body: `<h1>台灣羽球選手數據與最新動態</h1>` +
+    (asiad && asiad.active
+      ? `<p class="cta"><a href="${BASE}asiad/">${esc(asiad.name)}羽球中華隊戰績：${esc(asiad.headline)} →</a></p>`
+      : "") +
     `<p class="lead">追蹤 ${players.length} 位現役選手的最新動態與相關報導,依項目分類。` +
     `目前收錄 ${news.length} 則報導。</p>` +
     [...byEvent.entries()].map(([ev, arr]) =>
