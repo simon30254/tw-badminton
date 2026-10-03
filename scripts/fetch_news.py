@@ -51,6 +51,14 @@ def clean(s):
     return html.unescape(re.sub(r"<!\[CDATA\[|\]\]>", "", s or "")).strip()
 
 
+def dedupe_title(t):
+    """有些來源的 RSS 會把標題整串重複一次(棒球站在自由體育上踩到)。
+    只處理「前半等於後半」這種剛好重複一次的情況,不做模糊比對以免誤傷。"""
+    t = (t or "").strip()
+    h = len(t) // 2
+    return t[:h].strip() if len(t) > 20 and len(t) % 2 == 0 and t[:h] == t[h:] else t
+
+
 def real_url(link):
     """Bing 的 apiclick.aspx 帶 url= 參數,還原成原始網址。"""
     if "bing.com" in link and "url=" in link:
@@ -66,7 +74,7 @@ def parse(xml):
         def tag(t):
             m = re.search(rf"<{t}[^>]*>(.*?)</{t}>", it, re.S)
             return clean(m.group(1)) if m else ""
-        title, link = tag("title"), tag("link")
+        title, link = dedupe_title(tag("title")), tag("link")
         if not title or not link:
             continue
         pub = tag("pubDate")
